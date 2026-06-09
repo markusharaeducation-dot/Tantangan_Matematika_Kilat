@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tantangan Matematika Kilat</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        @keyframes pulse-fast {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .animate-pulse-fast {
+            animation: pulse-fast 0.5s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 min-h-screen text-white flex flex-col justify-between p-4 transition-colors duration-500">
+
+    <!-- Header / Navbar -->
+    <header class="max-w-md w-full mx-auto text-center py-4">
+        <h1 class="text-3xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-pink-400 drop-shadow-md">
+            🧮 MATH SPRINT
+        </h1>
+        <p class="text-xs text-indigo-200 mt-1">Uji kecepatan berpikir dan ketajaman berhitungmu!</p>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow flex items-center justify-center max-w-md w-full mx-auto my-4">
+        
+        <!-- SCREEN 1: MENU UTAMA -->
+        <div id="screen-menu" class="w-full bg-white/10 backdrop-blur-md rounded-3xl p-6 shadow-2xl border border-white/10 transition-all duration-300">
+            <h2 class="text-xl font-bold text-center mb-6 text-yellow-300">Pilih Mode Bermain</h2>
+            
+            <!-- Pilihan Operasi -->
+            <div class="mb-6">
+                <label class="block text-sm font-semibold mb-2 text-indigo-200">Operasi Matematika:</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="selectOperation('add', this)" class="op-btn py-3 px-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/20 active:scale-95 transition-all text-center flex items-center justify-center gap-2 text-sm font-semibold text-white">
+                        <span>➕</span> Penjumlahan
+                    </button>
+                    <button onclick="selectOperation('sub', this)" class="op-btn py-3 px-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/20 active:scale-95 transition-all text-center flex items-center justify-center gap-2 text-sm font-semibold text-white">
+                        <span>➖</span> Pengurangan
+                    </button>
+                    <button onclick="selectOperation('mul', this)" class="op-btn py-3 px-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/20 active:scale-95 transition-all text-center flex items-center justify-center gap-2 text-sm font-semibold text-white">
+                        <span>✖️</span> Perkalian
+                    </button>
+                    <button onclick="selectOperation('div', this)" class="op-btn py-3 px-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/20 active:scale-95 transition-all text-center flex items-center justify-center gap-2 text-sm font-semibold text-white">
+                        <span>➗</span> Pembagian
+                    </button>
+                </div>
+                <button onclick="selectOperation('mix', this)" class="op-btn w-full mt-2 py-3 px-4 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 active:scale-95 transition-all text-center flex items-center justify-center gap-2 text-sm font-bold text-white border border-pink-400/30">
+                    <span>🌀</span> Campuran (Semua)
+                </button>
+            </div>
+
+            <!-- Pilihan Tingkat Kesulitan -->
+            <div class="mb-8">
+                <label class="block text-sm font-semibold mb-2 text-indigo-200">Tingkat Kesulitan:</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="selectDifficulty('easy', this)" class="diff-btn py-2 px-3 rounded-lg bg-emerald-600/30 border border-emerald-500/30 hover:bg-emerald-600/50 active:scale-95 transition-all text-center text-xs font-bold text-emerald-300">
+                        Mudah
+                    </button>
+                    <button onclick="selectDifficulty('medium', this)" class="diff-btn py-2 px-3 rounded-lg bg-amber-600/30 border border-amber-500/30 hover:bg-amber-600/50 active:scale-95 transition-all text-center text-xs font-bold text-amber-300">
+                        Sedang
+                    </button>
+                    <button onclick="selectDifficulty('hard', this)" class="diff-btn py-2 px-3 rounded-lg bg-rose-600/30 border border-rose-500/30 hover:bg-rose-600/50 active:scale-95 transition-all text-center text-xs font-bold text-rose-300">
+                        Sulit
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tombol Mulai -->
+            <button onclick="startGame()" class="w-full py-4 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-slate-900 font-extrabold text-lg rounded-2xl shadow-lg hover:shadow-yellow-500/20 active:scale-95 transition-all flex items-center justify-center gap-2">
+                MULAI PERMAINAN 🚀
+            </button>
+        </div>
+
+        <!-- SCREEN 2: AREA GAMEPLAY -->
+        <div id="screen-game" class="hidden w-full flex flex-col gap-4">
+            
+            <!-- Dashboard Info -->
+            <div class="grid grid-cols-3 gap-3">
+                <!-- Skor -->
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 text-center border border-white/5">
+                    <span class="block text-[10px] text-indigo-200 uppercase tracking-wider font-semibold">Skor</span>
+                    <span id="game-score" class="text-2xl font-bold text-yellow-300">0</span>
+                </div>
+                <!-- Sisa Waktu -->
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 text-center border border-white/5 relative overflow-hidden" id="timer-box">
+                    <span class="block text-[10px] text-indigo-200 uppercase tracking-wider font-semibold">Waktu</span>
+                    <span id="game-timer" class="text-2xl font-bold text-white">15s</span>
+                    <!-- Progress bar waktu di bagian bawah -->
+                    <div id="timer-bar" class="absolute bottom-0 left-0 h-1 bg-red-500 transition-all duration-100" style="width: 100%;"></div>
+                </div>
+                <!-- Beruntun / Streak -->
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 text-center border border-white/5">
+                    <span class="block text-[10px] text-indigo-200 uppercase tracking-wider font-semibold">Beruntun</span>
+                    <span id="game-streak" class="text-2xl font-bold text-pink-400">🔥 0</span>
+                </div>
+            </div>
+
+            <!-- Kartu Pertanyaan -->
+            <div class="bg-white/15 backdrop-blur-lg rounded-3xl p-8 text-center border border-white/10 shadow-2xl relative min-h-[180px] flex flex-col justify-center items-center">
+                <!-- Indikator Feedback Cepat -->
+                <div id="feedback-pop" class="absolute top-3 text-sm font-bold opacity-0 transition-all duration-300"></div>
+                
+                <!-- Soal Matematika -->
+                <div id="question-text" class="text-5xl font-extrabold tracking-tight select-none">
+                    0 + 0
+                </div>
+                <div class="text-indigo-200 text-xs mt-3 font-medium">Berapakah hasil dari soal di atas?</div>
+            </div>
+
+            <!-- Pilihan Jawaban (A, B, C, D) -->
+            <div class="grid grid-cols-2 gap-3" id="options-container">
+                <!-- Akan diisi otomatis lewat JS -->
+            </div>
+            
+            <!-- Tombol Keluar Darurat -->
+            <button onclick="quitGame()" class="text-center text-xs text-white/50 hover:text-white mt-2 underline transition-all">
+                Menyerah & Kembali ke Menu
+            </button>
+        </div>
+
+        <!-- SCREEN 3: GAME OVER -->
+        <div id="screen-over" class="hidden w-full bg-white/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl border border-white/10 text-center transition-all duration-300">
+            <div class="text-6xl mb-4">🏆</div>
+            <h2 class="text-2xl font-extrabold mb-1 text-red-400">Permainan Selesai!</h2>
+            <p class="text-sm text-indigo-200 mb-6" id="over-message">Waktu kamu telah habis atau menyerah.</p>
+            
+            <!-- Statistik Akhir -->
+            <div class="bg-indigo-950/50 rounded-2xl p-4 mb-6 border border-white/5 flex flex-col gap-3">
+                <div class="flex justify-between items-center text-sm border-b border-white/10 pb-2">
+                    <span class="text-indigo-200">Skor Akhir:</span>
+                    <span id="final-score" class="font-bold text-xl text-yellow-300">0</span>
+                </div>
+                <div class="flex justify-between items-center text-sm border-b border-white/10 pb-2">
+                    <span class="text-indigo-200">Jawaban Benar:</span>
+                    <span id="final-correct" class="font-bold text-emerald-400">0</span>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-indigo-200">Beruntun Maksimum:</span>
+                    <span id="final-streak" class="font-bold text-pink-400">🔥 0</span>
+                </div>
+            </div>
+
+            <!-- Skor Tertinggi Lokal -->
+            <div class="mb-6 text-xs text-indigo-200" id="high-score-display">
+                Skor Tertinggi Anda: <span class="font-bold text-white">0</span>
+            </div>
+
+            <!-- Tombol Navigasi Akhir -->
+            <div class="flex flex-col gap-2">
+                <button onclick="restartGame()" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold rounded-xl shadow-md active:scale-95 transition-all">
+                    Main Lagi 🔄
+                </button>
+                <button onclick="showMenu()" class="w-full py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl active:scale-95 transition-all text-sm">
+                    Kembali ke Menu Utama
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="max-w-md w-full mx-auto text-center py-2 text-[10px] text-indigo-300/60 border-t border-white/5">
+        &copy; 2026 Game Matematika Kilat. Dibuat dengan ❤️ untuk belajar yang menyenangkan.
+    </footer>
+
+    <!-- GAME LOGIC SCRIPT -->
+    <script>
+        // State Management
+        let gameState = {
+            operation: 'add', // add, sub, mul, div, mix
+            difficulty: 'easy', // easy, medium, hard
+            score: 0,
+            streak: 0,
+            maxStreak: 0,
+            correctCount: 0,
+            timeLeft: 15,
+            maxTime: 15,
+            timerInterval: null,
+            currentAnswer: 0,
+            isPlaying: false
+        };
+
+        // Sound Synthesis (Web Audio API)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSound(type) {
+            if (!audioCtx) return;
+            // Aktifkan AudioContext jika dalam keadaan suspend (kebijakan browser)
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                // Bunyi "ding" ceria
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'wrong') {
+                // Bunyi "buzz" mengecewakan
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(80, audioCtx.currentTime + 0.25);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'gameover') {
+                // Melodi sedih game over
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(220, audioCtx.currentTime + 0.15);
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.6);
+            }
+        }
+
+        // Inisialisasi awal saat dokumen dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            // Pilih opsi default secara visual
+            const defaultOpBtn = document.querySelector('.op-btn');
+            if (defaultOpBtn) selectOperation('add', defaultOpBtn);
+
+            const defaultDiffBtn = document.querySelector('.diff-btn');
+            if (defaultDiffBtn) selectDifficulty('easy', defaultDiffBtn);
+
+            // Muat skor tertinggi dari local storage jika ada
+            updateHighScoreDisplay();
+        });
+
+        // Pilih Operasi
+        function selectOperation(op, element) {
+            gameState.operation = op;
+            // Reset class semua tombol operasi
+            document.querySelectorAll('.op-btn').forEach(btn => {
+                btn.classList.remove('bg-indigo-600', 'border-indigo-400', 'shadow-md');
+                btn.classList.add('bg-white/5', 'border-white/10');
+            });
+            // Aktifkan yang dipilih (kecuali tombol campuran yang punya gradien bawaan)
+            if (op !== 'mix') {
+                element.classList.remove('bg-white/5', 'border-white/10');
+                element.classList.add('bg-indigo-600', 'border-indigo-400', 'shadow-md');
+            }
+        }
+
+        // Pilih Kesulitan
+        function selectDifficulty(diff, element) {
+            gameState.difficulty = diff;
+            // Reset class semua tombol kesulitan
+            document.querySelectorAll('.diff-btn').forEach(btn => {
+                btn.classList.remove('ring-4', 'ring-white/30', 'scale-105');
+            });
+            // Aktifkan yang dipilih
+            element.classList.add('ring-4', 'ring-white/30', 'scale-105');
+        }
+
+        // Mulai Permainan
+        function startGame() {
+            // Set parameter awal berdasarkan kesulitan
+            if (gameState.difficulty === 'easy') {
+                gameState.maxTime = 20;
+            } else if (gameState.difficulty === 'medium') {
+                gameState.maxTime = 15;
+            } else {
+                gameState.maxTime = 10;
+            }
+
+            gameState.score = 0;
+            gameState.streak = 0;
+            gameState.maxStreak = 0;
+            gameState.correctCount = 0;
+            gameState.timeLeft = gameState.maxTime;
+            gameState.isPlaying = true;
+
+            // Navigasi Screen
+            document.getElementById('screen-menu').classList.add('hidden');
+            document.getElementById('screen-game').classList.remove('hidden');
+
+            // Set UI game awal
+            updateGameUI();
+            generateQuestion();
+
+            // Mulai Timer Interval
+            clearInterval(gameState.timerInterval);
+            gameState.timerInterval = setInterval(tick, 100); // deteksi per 100ms agar progress bar mulus
+        }
+
+        // Sistem Timer per Detik/Milidetik
+        function tick() {
+            if (!gameState.isPlaying) return;
+
+            gameState.timeLeft -= 0.1;
+            
+            // Limitasi waktu ke maxTime agar tidak luber melewati batas UI
+            if (gameState.timeLeft > gameState.maxTime) {
+                gameState.timeLeft = gameState.maxTime;
+            }
+
+            if (gameState.timeLeft <= 0) {
+                gameState.timeLeft = 0;
+                endGame();
+            }
+
+            // Update Tampilan Timer
+            const timerText = document.getElementById('game-timer');
+            timerText.innerText = Math.ceil(gameState.timeLeft) + 's';
+
+            // Animasi bergetar dan warna merah jika waktu tinggal sedikit
+            const timerBox = document.getElementById('timer-box');
+            if (gameState.timeLeft <= 4) {
+                timerText.classList.add('text-red-500');
+                timerBox.classList.add('animate-pulse-fast');
+            } else {
+                timerText.classList.remove('text-red-500');
+                timerBox.classList.remove('animate-pulse-fast');
+            }
+
+            // Update Progress Bar
+            const percentage = (gameState.timeLeft / gameState.maxTime) * 100;
+            document.getElementById('timer-bar').style.width = `${percentage}%`;
+        }
+
+        // Update Dashboard Nilai Game
+        function updateGameUI() {
+            document.getElementById('game-score').innerText = gameState.score;
+            document.getElementById('game-streak').innerText = '🔥 ' + gameState.streak;
+        }
+
+        // Formula Generator Soal Matematika
+        function generateQuestion() {
+            let num1, num2, symbol;
+            let currentOp = gameState.operation;
+
+            // Jika pilih mode campuran, acak operasinya
+            if (currentOp === 'mix') {
+                const ops = ['add', 'sub', 'mul', 'div'];
+                currentOp = ops[Math.floor(Math.random() * ops.length)];
+            }
+
+            // Rentang Angka Berdasarkan Kesulitan
+            let minVal = 1, maxVal = 10;
+            if (gameState.difficulty === 'medium') {
+                minVal = 5;
+                maxVal = 30;
+            } else if (gameState.difficulty === 'hard') {
+                minVal = 10;
+                maxVal = 100;
+            }
+
+            // Pembuatan Soal Berdasarkan Jenis Operasi
+            if (currentOp === 'add') {
+                num1 = getRandomInt(minVal, maxVal);
+                num2 = getRandomInt(minVal, maxVal);
+                gameState.currentAnswer = num1 + num2;
+                symbol = '＋';
+            } else if (currentOp === 'sub') {
+                num1 = getRandomInt(minVal, maxVal);
+                num2 = getRandomInt(minVal, num1); // Hasil dipastikan bernilai positif agar tidak membingungkan
+                gameState.currentAnswer = num1 - num2;
+                symbol = '－';
+            } else if (currentOp === 'mul') {
+                // Untuk perkalian kita batasi angkanya sedikit agar tidak terlalu rumit dlm waktu cepat
+                let mulMax = 10;
+                if (gameState.difficulty === 'medium') mulMax = 15;
+                if (gameState.difficulty === 'hard') mulMax = 25;
+
+                num1 = getRandomInt(2, mulMax);
+                num2 = getRandomInt(2, 10);
+                gameState.currentAnswer = num1 * num2;
+                symbol = '×';
+            } else if (currentOp === 'div') {
+                // Untuk pembagian, kita generate jawaban terlebih dahulu untuk hasil pembagian bulat sempurana
+                let divMax = 10;
+                if (gameState.difficulty === 'medium') divMax = 15;
+                if (gameState.difficulty === 'hard') divMax = 25;
+
+                let pembagi = getRandomInt(2, divMax);
+                let hasil = getRandomInt(2, 10);
+                num1 = pembagi * hasil;
+                num2 = pembagi;
+                gameState.currentAnswer = hasil;
+                symbol = '÷';
+            }
+
+            // Render Teks Pertanyaan
+            document.getElementById('question-text').innerText = `${num1} ${symbol} ${num2}`;
+
+            // Generate Opsi Pilihan Ganda (4 Opsi)
+            generateOptions(gameState.currentAnswer);
+        }
+
+        // Generator Pilihan Ganda Distraktor Cerdas
+        function generateOptions(correctAnswer) {
+            let options = new Set();
+            options.add(correctAnswer);
+
+            // Cari 3 jawaban salah (distraktor) yang logis dan dekat dengan jawaban benar
+            while (options.size < 4) {
+                let offset = getRandomInt(-5, 5);
+                if (offset === 0) offset = getRandomInt(6, 10); // pastikan tidak sama
+                
+                let wrongVal = correctAnswer + offset;
+                // Pastikan tidak menghasilkan nilai negatif jika jawaban aslinya positif
+                if (wrongVal >= 0 || correctAnswer < 0) {
+                    options.add(wrongVal);
+                }
+            }
+
+            // Konversi Set ke Array lalu Acak Posisinya
+            let shuffledOptions = Array.from(options).sort(() => Math.random() - 0.5);
+
+            // Tampilkan ke UI Buttons
+            const container = document.getElementById('options-container');
+            container.innerHTML = ''; // Kosongkan container lama
+
+            shuffledOptions.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(opt, btn);
+                btn.className = "w-full py-4 px-6 bg-white/10 hover:bg-white/20 active:scale-95 border border-white/10 rounded-2xl text-xl font-bold transition-all text-center";
+                container.appendChild(btn);
+            });
+        }
+
+        // Cek Jawaban User
+        function checkAnswer(selected, buttonElement) {
+            if (!gameState.isPlaying) return;
+
+            // Nonaktifkan semua tombol agar tidak bisa spam klik
+            const allOptionBtns = document.querySelectorAll('#options-container button');
+            allOptionBtns.forEach(btn => btn.disabled = true);
+
+            const isCorrect = (selected === gameState.currentAnswer);
+            const feedbackPop = document.getElementById('feedback-pop');
+
+            if (isCorrect) {
+                // Efek Suara
+                playSound('correct');
+
+                // Naikkan skor, streak & beruntun maks
+                gameState.streak++;
+                gameState.correctCount++;
+                if (gameState.streak > gameState.maxStreak) {
+                    gameState.maxStreak = gameState.streak;
+                }
+
+                // Kalkulasi Skor Tambahan (dengan bonus Streak)
+                let basePoints = 10;
+                let streakBonus = Math.floor(gameState.streak / 3) * 5; // setiap kelipatan 3 beruntun dpt tambahan poin
+                gameState.score += (basePoints + streakBonus);
+
+                // Tambahkan Waktu Bonus (Maksimal tidak boleh melebihi maxTime asal)
+                let bonusTime = 2; // Detik bonus
+                if (gameState.difficulty === 'hard') bonusTime = 1.5;
+                gameState.timeLeft += bonusTime;
+
+                // Animasi Feedback Sukses
+                buttonElement.classList.remove('bg-white/10', 'border-white/10');
+                buttonElement.classList.add('bg-emerald-500', 'border-emerald-400', 'text-white');
+                
+                feedbackPop.innerText = `+${basePoints + streakBonus} Poin! (+${bonusTime}s)`;
+                feedbackPop.className = "absolute top-3 text-sm font-bold text-emerald-400 opacity-100 transition-all scale-110";
+
+            } else {
+                // Efek Suara
+                playSound('wrong');
+
+                // Patahkan streak
+                gameState.streak = 0;
+
+                // Pengurangan waktu sebagai penalti (bisa diatur sesuai selera)
+                let penaltyTime = 3; 
+                gameState.timeLeft -= penaltyTime;
+
+                // Animasi Feedback Gagal
+                buttonElement.classList.remove('bg-white/10', 'border-white/10');
+                buttonElement.classList.add('bg-rose-500', 'border-rose-400', 'text-white');
+
+                // Tandai mana yang seharusnya benar agar user belajar
+                allOptionBtns.forEach(btn => {
+                    if (parseInt(btn.innerText) === gameState.currentAnswer) {
+                        btn.classList.add('border-emerald-500', 'bg-emerald-500/20');
+                    }
+                });
+
+                feedbackPop.innerText = `Salah! (-${penaltyTime}s)`;
+                feedbackPop.className = "absolute top-3 text-sm font-bold text-rose-400 opacity-100 transition-all scale-110";
+            }
+
+            // Perbarui Dashboard Stats
+            updateGameUI();
+
+            // Beri sedikit jeda transisi ke soal berikutnya
+            setTimeout(() => {
+                feedbackPop.className = "absolute top-3 text-sm font-bold opacity-0 transition-all duration-300";
+                if (gameState.isPlaying) {
+                    generateQuestion();
+                }
+            }, 700);
+        }
+
+        // Akhiri Permainan / Game Over
+        function endGame() {
+            gameState.isPlaying = false;
+            clearInterval(gameState.timerInterval);
+
+            // Efek Suara Game Over
+            playSound('gameover');
+
+            // Set Data Tampilan Akhir
+            document.getElementById('final-score').innerText = gameState.score;
+            document.getElementById('final-correct').innerText = gameState.correctCount + ' Soal';
+            document.getElementById('final-streak').innerText = '🔥 ' + gameState.maxStreak;
+
+            // Simpan Skor Tertinggi ke Local Storage
+            const savedHighScore = localStorage.getItem('math_sprint_highscore') || 0;
+            if (gameState.score > parseInt(savedHighScore)) {
+                localStorage.setItem('math_sprint_highscore', gameState.score);
+                document.getElementById('over-message').innerText = "🎉 Rekor Baru Tercipta! Kamu luar biasa.";
+            } else {
+                document.getElementById('over-message').innerText = "Kerja bagus! Terus asah kemampuan otakmu.";
+            }
+
+            updateHighScoreDisplay();
+
+            // Navigasi Layar
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-over').classList.remove('hidden');
+        }
+
+        // Menyerah Saat Main
+        function quitGame() {
+            if(confirm("Apakah kamu yakin ingin menyerah?")) {
+                endGame();
+            }
+        }
+
+        // Tampilkan Menu Utama
+        function showMenu() {
+            document.getElementById('screen-over').classList.add('hidden');
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-menu').classList.remove('hidden');
+        }
+
+        // Mulai Ulang / Main Lagi
+        function restartGame() {
+            document.getElementById('screen-over').classList.add('hidden');
+            startGame();
+        }
+
+        // Perbarui Tampilan Skor Tertinggi
+        function updateHighScoreDisplay() {
+            const high = localStorage.getItem('math_sprint_highscore') || 0;
+            const element = document.getElementById('high-score-display');
+            if (element) {
+                element.innerHTML = `Skor Tertinggi Anda: <span class="font-extrabold text-yellow-300">${high}</span>`;
+            }
+        }
+
+        // Helper fungsi acak integer inklusif
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+    </script>
+</body>
+</html>
